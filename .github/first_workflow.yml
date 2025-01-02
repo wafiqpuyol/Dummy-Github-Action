@@ -1,0 +1,21 @@
+name: First Workflow
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  first-workflow:
+    name: My first workflow
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Multiline script
+        run: |
+          echo "Hello World"
+          echo "I am backend developer"
+      - name: Print My Name
+        run: echo "My name is ${{ github.actor }}"
+      - name: Action completed
+        run: echo "Action completed"
