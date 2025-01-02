@@ -15,8 +15,36 @@ jobs:
       - name: Multiline script
         run: |
           echo "Hello World"
-          echo "I am backend developer"
+          exit 1
       - name: Print My Name
         run: echo "My name is ${{ github.actor }}"
       - name: Action completed
         run: echo "Action completed"
+    outputs:
+      status: ${{ job.status }}
+
+  # secondary-workflow:
+  #   name: My second workflow
+  #   runs-on: ubuntu-latest
+  #   needs: first-workflow
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Login to Docker Hub
+  #       uses: docker/login-action@v2
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     - name: Extract metadata (tags, labels) for Docker
+  #       id: meta
+  #       uses: docker/metadata-action@v4
+  #       with:
+  #         images: arjonhasan/demo-github-action
+  #     - name: Build and push
+  #       if: ${{needs.first-workflow.outputs.status == 'success'}}
+  #       uses: docker/build-push-action@v4
+  #       with:
+  #         context: .
+  #         file: ./Dockerfile
+  #         push: true
+  #         tags: ${{ steps.meta.outputs.tags }}
