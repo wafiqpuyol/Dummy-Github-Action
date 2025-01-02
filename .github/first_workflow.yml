@@ -2,7 +2,8 @@ name: First Workflow
 
 on:
   push:
-    branches: ["master"]
+    branches:
+      - master
 
 jobs:
   first-workflow:
@@ -10,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Multiline script
         run: |
           echo "Hello World"
