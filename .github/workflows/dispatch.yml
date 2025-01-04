@@ -1,0 +1,21 @@
+name: Dispatch Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      username:
+        required: true
+        type: string
+        description: Please enter your username
+      age:
+        required: false
+        type: number
+        default: 69
+        description: Please enter your age
+
+jobs:
+  dispatch-workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print the status
+        run: echo "Hello ${{ inputs.username }} . Is your age ${{ inputs.age }} ?"
