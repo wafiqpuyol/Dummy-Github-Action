@@ -1,0 +1,24 @@
+name: Context & Output
+
+on:
+  push:
+    branches:
+      - dispatch-schedule-practice
+
+jobs:
+  context_output:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Test
+        run: |
+          echo "Running Test"
+          sleep 10
+      - name: Success Test
+        if: ${{ success() }}
+        run: echo "Success"
+      - name: Failure Test
+        if: ${{ failure() }}
+        run: echo "Failure"
+      - name: Cancel Test
+        if: ${{ cancelled() }}
+        run: echo "Cancelled"
