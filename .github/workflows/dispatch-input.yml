@@ -1,0 +1,37 @@
+name: Section 3 Dispatch
+
+on:
+  workflow_dispatch:
+    inputs:
+      run-tests:
+        description: "Choose whether to run tests or not"
+        required: true
+        type: boolean
+      node-version:
+        description: "Choose the node version to run the tests on"
+        required: false
+        type: string
+        default: "18"
+      environment:
+        description: "Choose the environment to run the tests on"
+        required: false
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+        default: "development"
+
+jobs:
+  section-3-dispatch:
+    if: ${{ inputs.run-tests }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: Run Tests
+        run: echo "Successfully run tests in ${{ inputs.environment }} & node version - ${{ inputs.node-version }}"
