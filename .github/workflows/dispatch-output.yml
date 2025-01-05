@@ -36,7 +36,7 @@ jobs:
         id: display_user_info
         run: |
           echo "${{ github.actor }} logged in Docker from ${{ github.repository }}"
-          echo "test_output=Test has passed" >> GITHUB_OUTPUT
+          echo "test_output=Test has passed" >> $GITHUB_OUTPUT
 
   run-tests:
     runs-on: ubuntu-latest
