@@ -1,0 +1,62 @@
+name: If Statement Workflow
+
+on:
+  push:
+    branches: master
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      Node_Version:
+        required: false
+        type: string
+        description: Please enter the node version
+        default: "16"
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    strategy:
+      matrix:
+        tests:
+          [{ name: lint, command: npx lint }, { name: jest, command: npx jest }]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.Node_Version}}
+
+      - name: Run ${{ matrix.tests.name }}
+        run: ${{ matrix.tests.command }}
+
+  build-app:
+    runs-on: ubuntu-latest
+    needs: run-tests
+    if: success() && github.event == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build App
+        run: echo "Building App ...."
+
+  deploy-app:
+    runs-on: ubuntu-latest
+    needs: [run-tests, build-app]
+    if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy App
+        run: echo "Deploying App ...."
+
+  send-notification:
+    runs-on: ubuntu-latest
+    if: failure()
+    steps:
+      - name: Send Notification
+        run: echo "Sending Notification ...."
