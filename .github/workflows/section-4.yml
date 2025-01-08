@@ -1,0 +1,97 @@
+name: Run tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  run-tests:
+    if: github.event_name == 'pull_request'
+    strategy:
+      matrix:
+        test:
+          [
+            { name: lint, command: npx eslint, test: lint-test },
+            { name: unit test, command: npx jest, test: unit-test },
+          ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Restore Cache
+        id: restore-cache
+        uses: actions/cache/restore@v4.0.2
+        with:
+          key: ${{ matrix.test.test }}-${{ hashfiles('**/package-lock.json') }}
+          path: ./${{ matrix.test.test }}-results.txt
+
+      - name: Run ${{ matrix.test.name }}
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        run: ${{ matrix.test.command }}
+
+      - name: Save Test Results
+        if: success() && steps.restore-cache.outputs.cache-hit != 'true'
+        run: echo "Tests have passed!" >> ${{ matrix.test.test }}-results.txt
+
+      - name: Save Cache
+        if: success() && steps.restore-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4.0.2
+        with:
+          key: ${{ matrix.test.test }}-${{ hashfiles('**/package-lock.json') }}
+          path: ./${{ matrix.test.test }}-results.txt
+
+  build-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build App
+        run: echo "Building app..."
+
+      - name: Upload a Build Artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: my-app-artifact
+          path: |
+            .eslintrc.js
+            app.js
+            app.test.js
+            package.json
+          overwrite: true
+
+  deploy-app:
+    needs: build-app
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v4.1.7
+        with:
+          name: my-app-artifact
+          path: production-app
+
+      - name: Deploy App
+        run: echo "Deploying app..."
+
+  send-failure-notification:
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Notfication
+        run: echo "Sending notification"
