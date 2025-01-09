@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+name: Run tests
+=======
 name: Section 4 workflow
+>>>>>>> f22b5d557f8590511b68647c6f8349c35d2099fe
 
 on:
   push:
