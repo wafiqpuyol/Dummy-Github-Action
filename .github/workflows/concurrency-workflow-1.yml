@@ -1,0 +1,20 @@
+name: Concurrency Workflow 1
+
+on:
+  pull_request:
+    branches: concurrency
+
+concurrency: concurrency_workflow_1_key
+
+jobs:
+  concurrency_workflow_1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Start Concurrency Workflow 1
+        run: echo "Start Concurrency Workflow 1"
+
+      - name: Run Concurrency Workflow 1
+        run: sleep 60
