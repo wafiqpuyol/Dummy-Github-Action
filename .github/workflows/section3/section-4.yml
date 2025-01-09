@@ -1,4 +1,4 @@
-name: Run tests
+name: Section 4 workflow
 
 on:
   push:
