@@ -1,0 +1,54 @@
+name: Section 3 Output
+
+on:
+  workflow_dispatch:
+    inputs:
+      User:
+        required: true
+        type: string
+        description: Please enter your name
+      Environment:
+        required: true
+        type: choice
+        description: Please choose the environment
+        options:
+          - Development
+          - Staging
+          - Production
+        default: Development
+
+jobs:
+  docker-login:
+    runs-on: ubuntu-latest
+    outputs:
+      docker_login_output: ${{ steps.display_user_info.outputs.test_output }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Display User Info
+        id: display_user_info
+        run: |
+          echo "${{ github.actor }} logged in Docker from ${{ github.repository }}"
+          echo "test_output=Test has passed" >> $GITHUB_OUTPUT
+
+  run-tests:
+    runs-on: ubuntu-latest
+    needs: docker-login
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Tests
+        run: echo "Running tests in ${{ inputs.Environment }}"
+
+      - name: Show Test Output
+        run: |
+          sleep 10
+          echo "Test_output = ${{ needs.docker-login.outputs.docker_login_output }}"
