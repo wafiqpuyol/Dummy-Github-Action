@@ -1,0 +1,20 @@
+name: Concurrency Job 1
+
+on:
+  pull_request:
+    branches: concurrency
+
+concurrency: concurrency-job-key-1
+
+jobs:
+  concurrency-job-1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start Concurrency Job 1
+        run: echo "Concurrency Job 1 Started"
+
+      - name: Run Concurrency Job 1
+        run: sleep 60
