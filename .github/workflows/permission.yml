@@ -1,0 +1,32 @@
+name: Github Token & Permission
+
+on:
+  push:
+    branches: master
+
+jobs:
+  permission-to-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Create ReadMe File
+        run: echo "Hello World" > README.md
+
+      - name: Show Github Token
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}"
+          echo "${{ github.token }}"
+
+      - name: Commit Changes
+        run: |
+          git config --global user.name ${{ secrets.GH_USERNAME }}
+          git config --global user.email ${{ secrets.GH_EMAIL }}
+          git add README.md
+          git commit -m "Add README.md"
+          git push origin master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
