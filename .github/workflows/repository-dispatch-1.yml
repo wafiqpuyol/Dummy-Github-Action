@@ -8,6 +8,10 @@ on:
 jobs:
   trigger-workflow-2:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
     steps:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v3.0.0
