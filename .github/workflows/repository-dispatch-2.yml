@@ -1,0 +1,14 @@
+name: Repository Dispatch 2
+
+on:
+  repository_dispatch:
+    types: [avengers]
+
+jobs:
+  run-workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run workflow
+        run: |
+          echo "Branch: ${{ github.event.client_payload.branch }}"
+          echo "Username: ${{ github.event.client_payload.myusername }}"
